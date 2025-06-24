@@ -10,6 +10,24 @@ nr_numbers = 0
 nr_symbols = 0
 password = ""
 
+def genPW(x):
+    pw_length = int(x)
+    nr_letters = random.randint(1, pw_length-2)
+    chars_left = pw_length-nr_letters
+    nr_numbers = random.randint(1, chars_left-1)
+    chars_left = chars_left-nr_numbers
+    nr_symbols = chars_left
+
+    for x in range(0, nr_letters):
+        pw_list.append(random.choice(letters))
+    for x in range(0, nr_symbols):
+        pw_list.append(random.choice(symbols))
+    for x in range(0, nr_numbers):
+        pw_list.append(random.choice(numbers))
+
+    random.shuffle(pw_list)
+
+
 # Create the parser
 parser = argparse.ArgumentParser(description="A simple argument parser example.")
 
@@ -22,27 +40,22 @@ args = parser.parse_args()
 
 # Use the arguments
 if args.l:
-    pw_length = int(args.l)
-    nr_letters = random.randint(1, pw_length)
-    chars_left = pw_length-nr_letters
-    nr_numbers = random.randint(1, chars_left)
-    chars_left = chars_left-nr_numbers
-    nr_symbols = chars_left
-
-    for x in range(0, nr_letters):
-        pw_list.append(random.choice(letters))
-    for x in range(0, nr_symbols):
-        pw_list.append(random.choice(symbols))
-    for x in range(0, nr_numbers):
-        pw_list.append(random.choice(numbers))
+    if int(args.l) <= 2:
+        print("I don't do less than 3 characters, sorry.")
+    else:
+        genPW(args.l)
+else:
+    genPW(int(22))
 
 
-    random.shuffle(pw_list)
-
-    for x in range(0, len(pw_list)):
-        password += str(pw_list.pop(0))
 
 
-    
+# Putting the password together and printing it
+for x in range(0, len(pw_list)):
+    password += str(pw_list.pop(0))
 
+if len(password) <= 2:
+    print("No password was generated, try again.")
+else:    
     print(f"New password is:\n{password}")
+
