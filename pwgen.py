@@ -5,57 +5,64 @@ numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
 
 pw_list = []
-nr_letters = 0
-nr_numbers = 0
-nr_symbols = 0
 password = ""
+a = False
+b = False
+c = False
 
-def genPW(x):
+def genPW(x, a, b, c):
     pw_length = int(x)
-    nr_letters = random.randint(1, pw_length-2)
-    chars_left = pw_length-nr_letters
-    nr_numbers = random.randint(1, chars_left-1)
-    chars_left = chars_left-nr_numbers
-    nr_symbols = chars_left
 
-    for x in range(0, nr_letters):
-        pw_list.append(random.choice(letters))
-    for x in range(0, nr_symbols):
-        pw_list.append(random.choice(symbols))
-    for x in range(0, nr_numbers):
-        pw_list.append(random.choice(numbers))
-
-    random.shuffle(pw_list)
+    if a == True:     
+        for x in range(0, pw_length):
+            pw_list.append(random.choice(letters))
+    if b == True:
+        for x in range(0, pw_length):
+            pw_list.append(random.choice(numbers))
+    if c == True:  
+        for x in range(0, pw_length):
+            pw_list.append(random.choice(symbols))
+    return pw_length
 
 
 # Create the parser
 parser = argparse.ArgumentParser(description="A simple argument parser example.")
 
 # Add arguments
-parser.add_argument("-l", help="Length of password")
-#parser.add_argument("-c", action="store_true", help="hmm".)
+parser.add_argument("-l", help="Length of password.")
+parser.add_argument("-o", help="options: 1=letter, 2=numbers, 3=symbols. -o 123 for all, -o 12 for letters and numbers.")
+parser.add_argument("-c", action="store_true", help="Make letters only lower case.")
+parser.add_argument("-C", action="store_true", help="Make letters only upper case.")
 
 # Parse the arguments
 args = parser.parse_args()
 
 # Use the arguments
-if args.l:
-    if int(args.l) <= 2:
-        print("I don't do less than 3 characters, sorry.")
-    else:
-        genPW(args.l)
+if args.o:
+    if "1" in args.o:
+        a = True
+    if "2" in args.o:
+        b = True
+    if "3" in args.o:
+        c = True
 else:
-    genPW(int(22))
+    a = True
+    b = True
+    c = True
+    
+if args.l:
+    pw_length = genPW(args.l, a, b, c)
+else:
+    pw_length = genPW(int(22), a, b, c)
 
+random.shuffle(pw_list)
 
-
-
-# Putting the password together and printing it
-for x in range(0, len(pw_list)):
+for x in range(0, pw_length):
     password += str(pw_list.pop(0))
 
-if len(password) <= 2:
-    print("No password was generated, try again.")
-else:    
-    print(f"New password is:\n{password}")
+if args.c:
+    password = password.lower()
+if args.C:
+    password = password.upper()
 
+print(f"New password is:\n{password}")
